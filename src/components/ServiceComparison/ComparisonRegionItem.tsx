@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AWSService } from '../../types';
 import { FaChevronDown, FaChevronUp, FaCheck, FaTimes } from 'react-icons/fa';
 import { getRegionName } from '../../api';
+import AWSServiceIcon from '../AWSServiceIcon';
 
 interface ComparisonRegionItemProps {
   region: string;
@@ -72,11 +73,14 @@ const ComparisonRegionItem: React.FC<ComparisonRegionItemProps> = ({
               <h4 className="text-sm font-medium text-emerald-700 mb-2">
                 <FaCheck className="inline-block mr-1" /> Supported Services ({supportedServices.length})
               </h4>
-              <ul className="text-sm space-y-1">
+              <ul className="text-sm space-y-2">
                 {supportedServices.map(service => (
-                  <li key={service.id} className="text-gray-700">
-                    {service.name}
-                    <span className="text-xs text-gray-500 ml-1">({service.serviceCode})</span>
+                  <li key={service.id} className="flex items-center">
+                    <AWSServiceIcon service={service} size="sm" className="mr-2 flex-shrink-0" />
+                    <div>
+                      <div className="text-gray-700">{service.name}</div>
+                      <div className="text-xs text-gray-500">{service.serviceCode}</div>
+                    </div>
                   </li>
                 ))}
                 {supportedServices.length === 0 && (
@@ -90,11 +94,14 @@ const ComparisonRegionItem: React.FC<ComparisonRegionItemProps> = ({
               <h4 className="text-sm font-medium text-red-700 mb-2">
                 <FaTimes className="inline-block mr-1" /> Unsupported Services ({unsupportedServices.length})
               </h4>
-              <ul className="text-sm space-y-1">
+              <ul className="text-sm space-y-2">
                 {unsupportedServices.map(service => (
-                  <li key={service.id} className="text-gray-700">
-                    {service.name}
-                    <span className="text-xs text-gray-500 ml-1">({service.serviceCode})</span>
+                  <li key={service.id} className="flex items-center">
+                    <AWSServiceIcon service={service} size="sm" className="mr-2 flex-shrink-0" />
+                    <div>
+                      <div className="text-gray-700">{service.name}</div>
+                      <div className="text-xs text-gray-500">{service.serviceCode}</div>
+                    </div>
                   </li>
                 ))}
                 {unsupportedServices.length === 0 && (

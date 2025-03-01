@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AWSService } from '../../types';
 import { FaPlus, FaTimes, FaSearch } from 'react-icons/fa';
+import AWSServiceIcon from '../AWSServiceIcon';
 
 interface ServiceSelectorProps {
   services: AWSService[];
@@ -52,10 +53,9 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
     onServicesChange(selectedServices.filter(code => code !== serviceCode));
   };
 
-  // Get service name by service code
-  const getServiceName = (serviceCode: string): string => {
-    const service = services.find(s => s.serviceCode === serviceCode);
-    return service ? service.name : serviceCode;
+  // Get service by service code
+  const getService = (serviceCode: string): AWSService | undefined => {
+    return services.find(s => s.serviceCode === serviceCode);
   };
 
   return (
@@ -66,21 +66,27 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
       
       {/* Selected services */}
       <div className="flex flex-wrap gap-2 mb-2">
-        {selectedServices.map(serviceCode => (
-          <div 
-            key={serviceCode}
-            className="flex items-center bg-aws-blue-100 text-aws-blue-800 px-3 py-1 rounded-full text-sm"
-          >
-            <span>{getServiceName(serviceCode)}</span>
-            <button
-              className="ml-2 text-aws-blue-600 hover:text-aws-blue-800"
-              onClick={() => handleRemoveService(serviceCode)}
-              aria-label={`Remove ${getServiceName(serviceCode)}`}
+        {selectedServices.map(serviceCode => {
+          const service = getService(serviceCode);
+          if (!service) return null;
+          
+          return (
+            <div 
+              key={serviceCode}
+              className="flex items-center bg-aws-blue-100 text-aws-blue-800 px-3 py-1 rounded-full text-sm"
             >
-              <FaTimes size={12} />
-            </button>
-          </div>
-        ))}
+              <AWSServiceIcon service={service} size="sm" className="mr-2" />
+              <span>{service.name}</span>
+              <button
+                className="ml-2 text-aws-blue-600 hover:text-aws-blue-800"
+                onClick={() => handleRemoveService(serviceCode)}
+                aria-label={`Remove ${service.name}`}
+              >
+                <FaTimes size={12} />
+              </button>
+            </div>
+          );
+        })}
         
         {selectedServices.length === 0 && (
           <div className="text-gray-500 text-sm italic">
@@ -120,9 +126,12 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
                   className="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleAddService(service.serviceCode)}
                 >
-                  <div>
-                    <div className="font-medium">{service.name}</div>
-                    <div className="text-xs text-gray-500">{service.serviceCode}</div>
+                  <div className="flex items-center">
+                    <AWSServiceIcon service={service} size="sm" className="mr-2" />
+                    <div>
+                      <div className="font-medium">{service.name}</div>
+                      <div className="text-xs text-gray-500">{service.serviceCode}</div>
+                    </div>
                   </div>
                   <FaPlus className="text-aws-orange" />
                 </div>

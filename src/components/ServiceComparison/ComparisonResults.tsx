@@ -4,6 +4,7 @@ import ComparisonRegionItem from './ComparisonRegionItem';
 import { FaFilter, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { getRegionName } from '../../api';
 import { AWSService } from '../../types';
+import AWSServiceIcon from '../AWSServiceIcon';
 
 interface ComparisonResultsProps {
   results: ServiceComparisonResult;
@@ -55,17 +56,16 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ results, selected
 
   const filteredResults = getFilteredResults();
 
-  // Get service names for display
-  const getServiceNames = () => {
-    return selectedServices.map(code => {
-      const service = services.find(s => s.serviceCode === code);
-      return service ? service.name : code;
-    });
+  // Get service objects for the selected service codes
+  const getSelectedServiceObjects = (): AWSService[] => {
+    return selectedServices
+      .map(code => services.find(s => s.serviceCode === code))
+      .filter((service): service is AWSService => service !== undefined);
   };
 
   // Format selected services for display
   const formatSelectedServices = () => {
-    const serviceNames = getServiceNames();
+    const serviceNames = getSelectedServiceObjects().map(s => s.name);
     if (serviceNames.length <= 2) {
       return serviceNames.join(' and ');
     }
@@ -76,8 +76,9 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ results, selected
     <div className="mt-4">
       {/* Header with filter */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">
-          Comparison Results: <span className="text-aws-orange">{formatSelectedServices()}</span>
+        <h2 className="text-xl font-semibold flex items-center">
+          Comparison Results: 
+          <span className="text-aws-orange ml-2">{formatSelectedServices()}</span>
         </h2>
         <div className="flex items-center space-x-2">
           <FaFilter className="text-gray-400" />
@@ -92,6 +93,19 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ results, selected
             <option value="unavailable">Unavailable Everywhere</option>
           </select>
         </div>
+      </div>
+
+      {/* Selected services with icons */}
+      <div className="mb-4 flex flex-wrap gap-2">
+        {getSelectedServiceObjects().map(service => (
+          <div key={service.serviceCode} className="flex items-center bg-white rounded-md border p-2">
+            <AWSServiceIcon service={service} size="sm" className="mr-2" />
+            <div>
+              <div className="text-sm font-medium">{service.name}</div>
+              <div className="text-xs text-gray-500">{service.serviceCode}</div>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Summary stats */}
