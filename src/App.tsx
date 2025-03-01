@@ -8,10 +8,11 @@ import RegionList from './components/RegionList';
 import LoadingSpinner from './components/LoadingSpinner';
 import ErrorMessage from './components/ErrorMessage';
 import RegionComparison from './components/RegionComparison';
-import { FaSearch, FaExchangeAlt } from 'react-icons/fa';
+import ServiceComparison from './components/ServiceComparison';
+import { FaSearch, FaExchangeAlt, FaLayerGroup } from 'react-icons/fa';
 
 // Define view types
-type ViewType = 'service-search' | 'region-comparison';
+type ViewType = 'service-search' | 'region-comparison' | 'service-comparison';
 
 function App() {
   const [awsData, setAwsData] = useState<AWSEndpointData | null>(null);
@@ -65,8 +66,8 @@ function App() {
   // Switch between views
   const switchView = (view: ViewType) => {
     setActiveView(view);
-    // Reset selected service when switching to region comparison
-    if (view === 'region-comparison') {
+    // Reset selected service when switching to comparison views
+    if (view !== 'service-search') {
       setSelectedService(null);
     }
   };
@@ -108,6 +109,17 @@ function App() {
                   <FaExchangeAlt className="mr-2" />
                   <span>Region Comparison</span>
                 </button>
+                <button
+                  className={`flex items-center px-4 py-2 ${
+                    activeView === 'service-comparison'
+                      ? 'bg-aws-orange text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-50'
+                  }`}
+                  onClick={() => switchView('service-comparison')}
+                >
+                  <FaLayerGroup className="mr-2" />
+                  <span>Service Comparison</span>
+                </button>
               </div>
             </div>
             
@@ -134,6 +146,10 @@ function App() {
             
             {!loading && !error && activeView === 'region-comparison' && awsData && (
               <RegionComparison awsData={awsData} />
+            )}
+            
+            {!loading && !error && activeView === 'service-comparison' && awsData && (
+              <ServiceComparison awsData={awsData} />
             )}
             
             {!loading && !error && activeView === 'service-search' && !selectedService && (
