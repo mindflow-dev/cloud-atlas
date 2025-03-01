@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchAWSData, getServices, getServiceRegions } from './api';
 import { AWSEndpointData, AWSService, AWSRegion } from './types';
 import Header from './components/Header';

@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
           <div className="flex items-center">
             <span className="mr-2">Data sourced directly from AWS</span>
             <a 
-              href="https://github.com/mindflow/cloudatlas" 
+              href="https://github.com/mindflow-dev/cloud-atlas" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-aws-blue hover:text-aws-orange transition-colors flex items-center"
