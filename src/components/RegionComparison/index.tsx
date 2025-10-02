@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { AWSEndpointData, AWSRegion } from '../../types';
-import RegionSelector from './RegionSelector';
-import ComparisonResults from './ComparisonResults';
-import { compareRegions, RegionComparisonResult } from '../../utils/compareRegions';
-import { getRegions } from '../../api';
-import { FaExchangeAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { AWSEndpointData, AWSRegion } from "../../types";
+import RegionSelector from "./RegionSelector";
+import ComparisonResults from "./ComparisonResults";
+import {
+  compareRegions,
+  RegionComparisonResult,
+} from "../../utils/compareRegions";
+import { getRegions } from "../../api";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface RegionComparisonProps {
   awsData: AWSEndpointData;
@@ -13,7 +16,8 @@ interface RegionComparisonProps {
 const RegionComparison: React.FC<RegionComparisonProps> = ({ awsData }) => {
   const [regions, setRegions] = useState<AWSRegion[]>([]);
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-  const [comparisonResults, setComparisonResults] = useState<RegionComparisonResult | null>(null);
+  const [comparisonResults, setComparisonResults] =
+    useState<RegionComparisonResult | null>(null);
 
   // Load regions on component mount
   useEffect(() => {
@@ -39,30 +43,31 @@ const RegionComparison: React.FC<RegionComparisonProps> = ({ awsData }) => {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
+    <div className="flex flex-col h-full">
       <div className="mb-4 flex-shrink-0">
         <div className="flex items-center mb-2">
           <FaExchangeAlt className="text-aws-orange mr-2" />
           <h2 className="text-xl font-semibold">Region Comparison</h2>
         </div>
         <p className="text-gray-600 mb-4">
-          Select multiple AWS regions to compare service availability across them
+          Select multiple AWS regions to compare service availability across
+          them
         </p>
-        
+
         <RegionSelector
           regions={regions}
           selectedRegions={selectedRegions}
           onRegionsChange={handleRegionsChange}
         />
-        
+
         {selectedRegions.length === 1 && (
           <div className="mt-2 text-amber-600 text-sm">
             Please select at least one more region to compare.
           </div>
         )}
       </div>
-      
-      <div className="flex-grow overflow-auto">
+
+      <div className="flex-grow overflow-auto mt-4">
         {comparisonResults && selectedRegions.length >= 2 ? (
           <ComparisonResults
             results={comparisonResults}
@@ -85,4 +90,4 @@ const RegionComparison: React.FC<RegionComparisonProps> = ({ awsData }) => {
   );
 };
 
-export default RegionComparison; 
+export default RegionComparison;

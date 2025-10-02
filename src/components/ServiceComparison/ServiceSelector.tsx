@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AWSService } from '../../types';
-import { FaPlus, FaTimes, FaSearch } from 'react-icons/fa';
-import AWSServiceIcon from '../AWSServiceIcon';
+import React, { useState, useEffect, useRef } from "react";
+import { AWSService } from "../../types";
+import { FaPlus, FaTimes, FaSearch } from "react-icons/fa";
+import AWSServiceIcon from "../AWSServiceIcon";
 
 interface ServiceSelectorProps {
   services: AWSService[];
@@ -14,69 +14,71 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
   selectedServices,
   onServicesChange,
 }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Filter services based on search term
   const filteredServices = services
-    .filter(service => 
-      !selectedServices.includes(service.serviceCode) &&
-      (service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       service.serviceCode.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter(
+      (service) =>
+        !selectedServices.includes(service.serviceCode) &&
+        (service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          service.serviceCode.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .slice(0, 100); // Limit to 100 results for performance
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   // Add a service to the selected services
   const handleAddService = (serviceCode: string) => {
     onServicesChange([...selectedServices, serviceCode]);
-    setSearchTerm('');
+    setSearchTerm("");
     setIsDropdownOpen(false);
   };
 
   // Remove a service from the selected services
   const handleRemoveService = (serviceCode: string) => {
-    onServicesChange(selectedServices.filter(code => code !== serviceCode));
+    onServicesChange(selectedServices.filter((code) => code !== serviceCode));
   };
 
   // Get service by service code
   const getService = (serviceCode: string): AWSService | undefined => {
-    return services.find(s => s.serviceCode === serviceCode);
+    return services.find((s) => s.serviceCode === serviceCode);
   };
 
   return (
     <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        Select Services to Compare
-      </label>
-      
       {/* Selected services */}
       <div className="flex flex-wrap gap-2 mb-2">
-        {selectedServices.map(serviceCode => {
+        {selectedServices.map((serviceCode) => {
           const service = getService(serviceCode);
           if (!service) return null;
-          
+
           return (
-            <div 
+            <div
               key={serviceCode}
-              className="flex items-center bg-aws-blue-100 text-aws-blue-800 px-3 py-1 rounded-full text-sm"
+              className="flex items-center bg-aws-blue-100 text-aws-blue-800 px-3 py-1 rounded-full text-sm border border-aws-blue-200 shadow-sm"
             >
               <AWSServiceIcon service={service} size="sm" className="mr-2" />
-              <span>{service.name}</span>
+              <span className="bg-white bg-opacity-50 px-1 py-0.5 rounded">
+                {service.name}
+              </span>
               <button
                 className="ml-2 text-aws-blue-600 hover:text-aws-blue-800"
                 onClick={() => handleRemoveService(serviceCode)}
@@ -87,14 +89,14 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
             </div>
           );
         })}
-        
+
         {selectedServices.length === 0 && (
           <div className="text-gray-500 text-sm italic">
             No services selected. Add services below.
           </div>
         )}
       </div>
-      
+
       {/* Service search */}
       <div className="relative" ref={dropdownRef}>
         <div className="flex">
@@ -115,22 +117,28 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
             />
           </div>
         </div>
-        
+
         {/* Dropdown for service selection */}
         {isDropdownOpen && (
           <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base overflow-auto focus:outline-none sm:text-sm">
             {filteredServices.length > 0 ? (
-              filteredServices.map(service => (
+              filteredServices.map((service) => (
                 <div
                   key={service.serviceCode}
                   className="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleAddService(service.serviceCode)}
                 >
                   <div className="flex items-center">
-                    <AWSServiceIcon service={service} size="sm" className="mr-2" />
+                    <AWSServiceIcon
+                      service={service}
+                      size="sm"
+                      className="mr-2"
+                    />
                     <div>
                       <div className="font-medium">{service.name}</div>
-                      <div className="text-xs text-gray-500">{service.serviceCode}</div>
+                      <div className="text-xs text-gray-500">
+                        {service.serviceCode}
+                      </div>
                     </div>
                   </div>
                   <FaPlus className="text-aws-orange" />
@@ -138,13 +146,15 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
               ))
             ) : (
               <div className="px-4 py-2 text-gray-500">
-                {searchTerm ? "No matching services found" : "Start typing to search for services"}
+                {searchTerm
+                  ? "No matching services found"
+                  : "Start typing to search for services"}
               </div>
             )}
           </div>
         )}
       </div>
-      
+
       {/* Help text */}
       <p className="mt-1 text-xs text-gray-500">
         Select at least 2 services to compare their regional availability
@@ -153,4 +163,4 @@ const ServiceSelector: React.FC<ServiceSelectorProps> = ({
   );
 };
 
-export default ServiceSelector; 
+export default ServiceSelector;

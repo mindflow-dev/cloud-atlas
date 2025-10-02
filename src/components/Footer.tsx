@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaGithub } from 'react-icons/fa';
+import React from "react";
+import { FaGithub } from "react-icons/fa";
 
 const Footer: React.FC = () => {
   return (
@@ -7,13 +7,22 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-600">
           <div className="mb-1 md:mb-0">
-            &copy; {new Date().getFullYear()} CloudAtlas by Mindflow - AWS Region Service Availability Explorer
+            &copy; {new Date().getFullYear()} CloudAtlas by{" "}
+            <a
+              href="https://mindflow.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-aws-blue hover:text-aws-orange transition-colors"
+            >
+              Mindflow
+            </a>{" "}
+            - AWS Region Service Availability Explorer
           </div>
           <div className="flex items-center">
             <span className="mr-2">Data sourced directly from AWS</span>
-            <a 
-              href="https://github.com/mindflow-dev/cloud-atlas" 
-              target="_blank" 
+            <a
+              href="https://github.com/mindflow-dev/cloud-atlas"
+              target="_blank"
               rel="noopener noreferrer"
               className="text-aws-blue hover:text-aws-orange transition-colors flex items-center"
             >
@@ -27,4 +36,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer; 
+export default Footer;

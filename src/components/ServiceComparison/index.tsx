@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { AWSEndpointData, AWSService } from '../../types';
-import ServiceSelector from './ServiceSelector';
-import ComparisonResults from './ComparisonResults';
-import { compareServices, ServiceComparisonResult } from '../../utils/compareServices';
-import { getServices } from '../../api';
-import { FaExchangeAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from "react";
+import { AWSEndpointData, AWSService } from "../../types";
+import ServiceSelector from "./ServiceSelector";
+import ComparisonResults from "./ComparisonResults";
+import {
+  compareServices,
+  ServiceComparisonResult,
+} from "../../utils/compareServices";
+import { getServices } from "../../api";
+import { FaExchangeAlt } from "react-icons/fa";
 
 interface ServiceComparisonProps {
   awsData: AWSEndpointData;
@@ -13,13 +16,26 @@ interface ServiceComparisonProps {
 const ServiceComparison: React.FC<ServiceComparisonProps> = ({ awsData }) => {
   const [services, setServices] = useState<AWSService[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [comparisonResults, setComparisonResults] = useState<ServiceComparisonResult | null>(null);
+  const [comparisonResults, setComparisonResults] =
+    useState<ServiceComparisonResult | null>(null);
 
-  // Load services on component mount
+  // Load services on component mount and initialize from URL params
   useEffect(() => {
     if (awsData) {
       const allServices = getServices(awsData);
       setServices(allServices);
+
+      // Read selected services from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const servicesParam = urlParams.get("services");
+      if (servicesParam) {
+        const servicesFromUrl = servicesParam
+          .split(",")
+          .filter((code) =>
+            allServices.some((service) => service.serviceCode === code)
+          );
+        setSelectedServices(servicesFromUrl);
+      }
     }
   }, [awsData]);
 
@@ -33,36 +49,48 @@ const ServiceComparison: React.FC<ServiceComparisonProps> = ({ awsData }) => {
     }
   }, [selectedServices, awsData]);
 
+  // Update URL parameters when selected services change
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (selectedServices.length > 0) {
+      url.searchParams.set("services", selectedServices.join(","));
+    } else {
+      url.searchParams.delete("services");
+    }
+    window.history.replaceState({}, "", url.toString());
+  }, [selectedServices]);
+
   // Handle service selection changes
   const handleServicesChange = (newSelectedServices: string[]) => {
     setSelectedServices(newSelectedServices);
   };
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="mb-4 flex-shrink-0">
+    <div className="flex flex-col">
+      <div className="mb-4">
         <div className="flex items-center mb-2">
           <FaExchangeAlt className="text-aws-orange mr-2" />
           <h2 className="text-xl font-semibold">Service Comparison</h2>
         </div>
         <p className="text-gray-600 mb-4">
-          Select multiple AWS services to compare regional availability across them
+          Select multiple AWS services to compare regional availability across
+          them
         </p>
-        
+
         <ServiceSelector
           services={services}
           selectedServices={selectedServices}
           onServicesChange={handleServicesChange}
         />
-        
+
         {selectedServices.length === 1 && (
           <div className="mt-2 text-amber-600 text-sm">
             Please select at least one more service to compare.
           </div>
         )}
       </div>
-      
-      <div className="flex-grow overflow-auto">
+
+      <div>
         {comparisonResults && selectedServices.length >= 2 ? (
           <ComparisonResults
             results={comparisonResults}
@@ -86,4 +114,4 @@ const ServiceComparison: React.FC<ServiceComparisonProps> = ({ awsData }) => {
   );
 };
 
-export default ServiceComparison; 
+export default ServiceComparison;
